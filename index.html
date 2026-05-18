@@ -382,12 +382,12 @@ const FILTERS = [
 const MEME_PILLS = ['GM☀️','GN🌙','LFG🚀','WAGMI💎','NGMI😭','REKT💀','BASED🔵','APE IN🦍','DIAMOND HANDS💎','TO THE MOON🌕','PROBABLY NOTHING','JUST VIBING😎','SER PLEAS🙏','NFA','HAVE FUN STAYING POOR'];
 const POSITIONS = [
   ['top-left','top-center','top-right'],
-  ['mid-left','center','mid-right'],
+  ['mid-left','mid-center','mid-right'],
   ['bot-left','bot-center','bot-right'],
 ];
 const POS_ICONS = {
   'top-left':'↖','top-center':'↑','top-right':'↗',
-  'mid-left':'←','center':'·','mid-right':'→',
+  'mid-left':'←','mid-center':'·','mid-right':'→',
   'bot-left':'↙','bot-center':'↓','bot-right':'↘',
 };
 const TEMPLATES = [
@@ -641,9 +641,6 @@ function drawNormie(W,H){
     ctx.drawImage(S.normieImg,-nw/2,-nh/2,nw,nh);
   }
 
-  // CSS filter
-  const filterStr=getCssFilter();
-  if(filterStr) ctx.filter=filterStr;
   ctx.restore();
   ctx.filter='none';
 }
@@ -657,7 +654,7 @@ function getCssFilter(){
   }
 }
 
-function applyImageFilter(ctx,W,H){}
+function applyImageFilter(ctx,W,H){ctx.filter=getCssFilter()||'none';}
 
 function drawTextLayer(layer,W,H){
   ctx.save();
@@ -1290,7 +1287,9 @@ function toggleLayerFX(key){
   const l=S.layers.find(l=>l.id===S.selectedLayerId);
   if(!l) return;
   l[key]=!l[key];
-  document.getElementById('fx'+key.charAt(0).toUpperCase()+key.slice(1)).classList.toggle('on',l[key]);
+  const idMap={outline:'fxOutline',glow:'fxLayerGlow',shadow:'fxLayerShadow',grad:'fxGrad',strip:'fxStrip'};
+  const el=document.getElementById(idMap[key]);
+  if(el) el.classList.toggle('on',l[key]);
   renderCanvas();
 }
 function updateLayerUI(){
